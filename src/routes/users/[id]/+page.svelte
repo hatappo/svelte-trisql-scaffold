@@ -4,7 +4,7 @@
 	import { page } from '$app/state';
 	import { deleteUser, getUser, updateUser } from '#lib/users.remote.ts';
 
-	const row = $derived(await getUser(page.params.id));
+	const row = $derived(await getUser(page.params.id ?? ''));
 
 	async function remove() {
 		if (!row) return;

@@ -4,7 +4,7 @@
 	import { page } from '$app/state';
 	import { deletePost, getPost, updatePost } from '#lib/posts.remote.ts';
 
-	const row = $derived(await getPost(page.params.id));
+	const row = $derived(await getPost(page.params.id ?? ''));
 
 	async function remove() {
 		if (!row) return;
