@@ -1,0 +1,19 @@
+{
+	"extends": "$app/tsconfig",
+	"compilerOptions": {
+		"strict": true,
+		"allowArbitraryExtensions": true
+	},
+	"include": [
+		"src",
+		"vite.config.ts"
+	],
+	"contentMappers": [
+		{
+			"package": "trisql",
+			"extensions": [
+				".sql"
+			]
+		}
+	]
+}

@@ -1,0 +1,4 @@
+{
+  "schema": ["db/schema.sql"],
+  "generate": { "out": "src/lib/sql", "schemas": ["public"] }
+}
