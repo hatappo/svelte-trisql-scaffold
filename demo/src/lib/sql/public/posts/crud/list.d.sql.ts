@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = { limit: string | number | bigint | AllValue };
 export type Row = { id: string; user_id: string; title: string; body: string; published: boolean; created_at: Date };
 export declare const raw: "SELECT * FROM posts\nORDER BY id\nLIMIT /*$limit*/100\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<{ limit: string | number | bigint | AllValue }, { id: string; user_id: string; title: string; body: string; published: boolean; created_at: Date }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };

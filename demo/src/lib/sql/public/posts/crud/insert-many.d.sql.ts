@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = { rows: Array<{ id?: string | number | bigint | DefaultValue; user_id: string | number | bigint | DefaultValue; title: string | DefaultValue; body?: string | DefaultValue; published?: boolean | DefaultValue; created_at?: Date | string | DefaultValue }> };
 export type Row = { id: string; user_id: string; title: string; body: string; published: boolean; created_at: Date };
 export declare const raw: "INSERT INTO posts (\n  id,\n  user_id,\n  title,\n  body,\n  published,\n  created_at\n)\nVALUES\n/*%for row in rows separating , */\n(\n  /*$row.id default-to */DEFAULT,\n  /*$row.user_id*/1,\n  /*$row.title*/'sample',\n  /*$row.body default-to */DEFAULT,\n  /*$row.published default-to */DEFAULT,\n  /*$row.created_at default-to */DEFAULT\n)\n/*%end */\nRETURNING *\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<{ rows: Array<{ id?: string | number | bigint | DefaultValue; user_id: string | number | bigint | DefaultValue; title: string | DefaultValue; body?: string | DefaultValue; published?: boolean | DefaultValue; created_at?: Date | string | DefaultValue }> }, { id: string; user_id: string; title: string; body: string; published: boolean; created_at: Date }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };

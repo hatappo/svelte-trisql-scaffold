@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = { user_id: string | number | bigint };
 export type Row = { count: number | null };
 export declare const raw: "SELECT count(*)::int AS count FROM posts\nWHERE user_id = /*$user_id*/1\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<{ user_id: string | number | bigint }, { count: number | null }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };

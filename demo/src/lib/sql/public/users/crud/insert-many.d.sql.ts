@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = { rows: Array<{ id?: string | number | bigint | DefaultValue; email: string | DefaultValue; name?: string | DefaultValue; status?: "active" | "inactive" | DefaultValue; created_at?: Date | string | DefaultValue }> };
 export type Row = { id: string; email: string; name: string | null; status: "active" | "inactive"; created_at: Date };
 export declare const raw: "INSERT INTO users (\n  id,\n  email,\n  name,\n  status,\n  created_at\n)\nVALUES\n/*%for row in rows separating , */\n(\n  /*$row.id default-to */DEFAULT,\n  /*$row.email*/'sample',\n  /*$row.name default-to */DEFAULT,\n  /*$row.status default-to */DEFAULT,\n  /*$row.created_at default-to */DEFAULT\n)\n/*%end */\nRETURNING *\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<{ rows: Array<{ id?: string | number | bigint | DefaultValue; email: string | DefaultValue; name?: string | DefaultValue; status?: "active" | "inactive" | DefaultValue; created_at?: Date | string | DefaultValue }> }, { id: string; email: string; name: string | null; status: "active" | "inactive"; created_at: Date }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };

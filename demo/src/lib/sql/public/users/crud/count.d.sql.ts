@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = Record<never, never>;
 export type Row = { count: number | null };
 export declare const raw: "SELECT count(*)::int AS count FROM users\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<Record<never, never>, { count: number | null }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };

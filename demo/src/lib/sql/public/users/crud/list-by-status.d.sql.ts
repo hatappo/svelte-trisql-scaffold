@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = { status: "active" | "inactive"; limit: string | number | bigint | AllValue };
 export type Row = { id: string; email: string; name: string | null; status: "active" | "inactive"; created_at: Date };
 export declare const raw: "SELECT * FROM users\nWHERE status = /*$status*/'active'\nLIMIT /*$limit*/100\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<{ status: "active" | "inactive"; limit: string | number | bigint | AllValue }, { id: string; email: string; name: string | null; status: "active" | "inactive"; created_at: Date }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };

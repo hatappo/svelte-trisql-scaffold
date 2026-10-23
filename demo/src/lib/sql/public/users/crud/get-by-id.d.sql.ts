@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = { id: string | number | bigint };
 export type Row = { id: string; email: string; name: string | null; status: "active" | "inactive"; created_at: Date };
 export declare const raw: "SELECT * FROM users\nWHERE id = /*$id*/1\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<{ id: string | number | bigint }, { id: string; email: string; name: string | null; status: "active" | "inactive"; created_at: Date }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };

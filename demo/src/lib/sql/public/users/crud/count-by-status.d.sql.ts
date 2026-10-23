@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = { status: "active" | "inactive" };
 export type Row = { count: number | null };
 export declare const raw: "SELECT count(*)::int AS count FROM users\nWHERE status = /*$status*/'active'\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<{ status: "active" | "inactive" }, { count: number | null }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };

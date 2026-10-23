@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = { id: string | number | bigint };
 export type Row = { id: string; user_id: string; title: string; body: string; published: boolean; created_at: Date };
 export declare const raw: "DELETE FROM posts\nWHERE id = /*$id*/1\nRETURNING *\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<{ id: string | number | bigint }, { id: string; user_id: string; title: string; body: string; published: boolean; created_at: Date }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };

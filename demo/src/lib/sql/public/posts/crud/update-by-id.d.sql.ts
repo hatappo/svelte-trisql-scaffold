@@ -3,6 +3,6 @@ import type { AllValue, DefaultValue, LikePattern, Query } from "trisql";
 export type Params = { updates: Array<{ name: string; value: string | number | bigint | DefaultValue }> | Record<string, string | number | bigint | DefaultValue>; where: { id: string | number | bigint } };
 export type Row = { id: string; user_id: string; title: string; body: string; published: boolean; created_at: Date };
 export declare const raw: "UPDATE posts\nSET\n/*%for item in updates separating , */\n  /*!item.name*/user_id = /*$item.value*/1\n/*%end */\nWHERE id = /*$where.id*/1\nRETURNING *\n";
-declare const query: Query<Params, Row>;
+declare const query: Query<{ updates: Array<{ name: string; value: string | number | bigint | DefaultValue }> | Record<string, string | number | bigint | DefaultValue>; where: { id: string | number | bigint } }, { id: string; user_id: string; title: string; body: string; published: boolean; created_at: Date }>;
 export default query;
 export type { AllValue, DefaultValue, LikePattern };
