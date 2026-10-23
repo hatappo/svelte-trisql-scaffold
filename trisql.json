@@ -1,4 +1,17 @@
 {
-  "schema": ["db/schema.sql"],
-  "generate": { "out": "src/lib/sql", "schemas": ["public"] }
+  "schema": [
+    "db/schema.sql"
+  ],
+  "generate": {
+    "out": "src/lib/sql",
+    "schemas": [
+      "public"
+    ]
+  },
+  "declarations": {
+    "auto": true,
+    "include": [
+      "src/**/*.sql"
+    ]
+  }
 }
