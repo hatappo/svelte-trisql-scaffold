@@ -30,7 +30,7 @@
 		"#lib/*": "./src/lib/*"
 	},
 	"dependencies": {
-		"trisql": "file:../../tysql",
+		"trisql": "file:../../trisql",
 		"valibot": "1.5.0"
 	}
 }
