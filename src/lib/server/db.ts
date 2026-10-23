@@ -7,7 +7,8 @@ let instance: Promise<PGlite> | undefined;
 
 export function db(): Promise<PGlite> {
 	instance ??= (async () => {
-		const pglite = new PGlite();
+		// pg（node-postgres）の既定に合わせ、int8 と numeric は文字列で受け取る（trisql の Row 型と一致させる）
+		const pglite = new PGlite({ parsers: { 20: (v: string) => v, 1700: (v: string) => v } });
 		await pglite.waitReady;
 		await pglite.exec(schema);
 		await pglite.exec(`
