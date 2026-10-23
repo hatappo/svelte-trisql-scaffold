@@ -1,20 +1,16 @@
-#!/usr/bin/env node
 /**
  * trisql のテーブル定義から、SvelteKit の Remote Functions と CRUD 画面をスキャフォールドする。
- *
- *   node scripts/scaffold.ts [--force] [table ...]
  *
  * 生成するもの（テーブルごと、単一列の主キーを持つものだけ）:
  *   src/lib/sql/<schema>/<table>/crud/      trisql generate と同じ（クエリ、barrel、.d.sql.ts）
  *   src/lib/<table>.remote.ts               list / get / create / update / delete の Remote Functions
  *   src/routes/<table>/+page.svelte         一覧と作成フォーム
- *   src/routes/<table>/[id]/+page.svelte    編集フォームと削除
+ *   src/routes/<table>/[id]/+page.svelte    編集フォーム（現在値を事前入力）と削除
  *
- * `.remote.ts` と routes は一度生成したら利用者が育てるもの。既にあれば --force が無い限り触らない。
+ * .remote.ts と routes は一度生成したら利用者が育てるもの。既にあれば force が無い限り触らない。
  */
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
-import { parseArgs } from 'node:util';
 import { type Column, exportName, introspect, loadConfig, openDescriber, type Table, writeCrud, writeDeclarations } from 'trisql';
 
 // --- 名前 -----------------------------------------------------------------------
@@ -221,6 +217,24 @@ function displayExpr(row: string, c: Column): string {
 	return `{${row}.${c.name}}`;
 }
 
+/** Row の値を、フォーム項目の入力型（文字列・数値・真偽値）に変換する式 */
+function prefillExpr(row: string, f: Field): string {
+	const v = `${row}.${f.column.name}`;
+	switch (f.input) {
+		case 'checkbox':
+			return `${v} ?? false`;
+		case 'number':
+			return `${v} ?? undefined`;
+		case 'date':
+			return `${v} instanceof Date ? ${v}.toISOString().slice(0, 10) : (${v} ?? '')`;
+		case 'datetime-local':
+			return `${v} instanceof Date ? ${v}.toISOString().slice(0, 16) : (${v} ?? '')`;
+		default:
+			if (['json', 'jsonb'].includes(f.column.typeName)) return `${v} == null ? '' : JSON.stringify(${v})`;
+			return `${v} == null ? '' : String(${v})`;
+	}
+}
+
 function listPageSource(p: Plan): string {
 	const { names, table, pk } = p;
 	const shown = table.columns.filter((c) => c.category !== 'A');
@@ -270,6 +284,15 @@ function detailPageSource(p: Plan): string {
 		'',
 		`\tconst row = $derived(await ${names.get}(${pkParam}));`,
 		'',
+		'\t// 現在値をフォームに入れる',
+		'\t$effect(() => {',
+		'\t\tif (!row) return;',
+		`\t\t${names.update}.fields.set({`,
+		`\t\t\t${pk.name}: String(row.${pk.name}),`,
+		...p.updateFields.map((f) => `\t\t\t${f.column.name}: ${prefillExpr('row', f)},`),
+		'\t\t});',
+		'\t});',
+		'',
 		'\tasync function remove() {',
 		'\t\tif (!row) return;',
 		`\t\tawait ${names.remove}(row.${pk.name});`,
@@ -306,21 +329,24 @@ function write(path: string, content: string, force: boolean, out: string[]): vo
 	out.push(`wrote   ${shown}`);
 }
 
-async function main(argv: string[]): Promise<number> {
-	const { positionals, values } = parseArgs({ args: argv, allowPositionals: true, options: { force: { type: 'boolean', default: false } } });
-	const config = loadConfig(process.cwd());
+export type ScaffoldOptions = { root?: string; force?: boolean; tables?: string[] };
+
+/** 生成を実行し、結果の行（wrote / kept / skipped）を返す。対象テーブルが無ければ例外 */
+export async function scaffold(options: ScaffoldOptions = {}): Promise<string[]> {
+	const positionals = options.tables ?? [];
+	const values = { force: options.force ?? false };
+	const cwd = options.root ?? process.cwd();
+	const config = loadConfig(cwd);
 	const describer = await openDescriber(config);
 	try {
 		let tables = await introspect(describer, config.generate.schemas);
 		if (positionals.length > 0) tables = tables.filter((t) => positionals.includes(t.name) || positionals.includes(`${t.schema}.${t.name}`));
-		if (tables.length === 0) {
-			console.error('No tables to scaffold.');
-			return 1;
-		}
+		if (tables.length === 0) throw new Error('No tables to scaffold.');
 		const crud = writeCrud(config.generate.out, tables);
 		const decl = await writeDeclarations(crud.sqlFiles, describer);
-		console.log(`crud: ${crud.written.length} written, ${crud.unchanged.length} unchanged; declarations: ${decl.written.length} written, ${decl.failed.length} skipped`);
-		const out: string[] = [];
+		const out: string[] = [
+			`crud: ${crud.written.length} written, ${crud.unchanged.length} unchanged; declarations: ${decl.written.length} written, ${decl.failed.length} skipped`
+		];
 		for (const table of tables) {
 			const p = plan(table);
 			if (!p) {
@@ -331,11 +357,9 @@ async function main(argv: string[]): Promise<number> {
 			write(join(config.root, 'src', 'routes', table.name, '+page.svelte'), listPageSource(p), values.force, out);
 			write(join(config.root, 'src', 'routes', table.name, '[id]', '+page.svelte'), detailPageSource(p), values.force, out);
 		}
-		for (const line of out) console.log(line);
-		return 0;
+		return out;
 	} finally {
 		await describer.close();
 	}
 }
 
-process.exitCode = await main(process.argv.slice(2));

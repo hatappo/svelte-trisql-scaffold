@@ -6,6 +6,17 @@
 
 	const row = $derived(await getUser(page.params.id ?? ''));
 
+	// 現在値をフォームに入れる
+	$effect(() => {
+		if (!row) return;
+		updateUser.fields.set({
+			id: String(row.id),
+			email: row.email == null ? '' : String(row.email),
+			name: row.name == null ? '' : String(row.name),
+			status: row.status == null ? '' : String(row.status),
+		});
+	});
+
 	async function remove() {
 		if (!row) return;
 		await deleteUser(row.id);

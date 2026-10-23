@@ -1,0 +1,22 @@
+{
+  "name": "svelte-trisql-scaffold",
+  "version": "0.1.0",
+  "description": "Scaffold SvelteKit Remote Functions and CRUD pages from a PostgreSQL schema with trisql.",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "bin": { "svelte-trisql-scaffold": "./src/cli.ts" },
+  "exports": { ".": "./src/index.ts" },
+  "files": ["src"],
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "trisql": ">=0.1.0-alpha.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "trisql": "file:../../../tysql",
+    "typescript": "7.1.0-dev.20261019.1"
+  }
+}

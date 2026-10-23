@@ -6,6 +6,18 @@
 
 	const row = $derived(await getPost(page.params.id ?? ''));
 
+	// 現在値をフォームに入れる
+	$effect(() => {
+		if (!row) return;
+		updatePost.fields.set({
+			id: String(row.id),
+			user_id: row.user_id == null ? '' : String(row.user_id),
+			title: row.title == null ? '' : String(row.title),
+			body: row.body == null ? '' : String(row.body),
+			published: row.published ?? false,
+		});
+	});
+
 	async function remove() {
 		if (!row) return;
 		await deletePost(row.id);
